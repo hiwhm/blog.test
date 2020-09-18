@@ -3,9 +3,9 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
-subtitle: ''
-description: ''
+title: blog.test - Hexo
+subtitle: 'subtitle'
+description: 'desc'
 keywords:
 author: John Doe
 language: en
@@ -103,4 +103,6 @@ theme: landscape
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
-  type: ''
+  type: 'git'
+  repository: https://github.com/hiwhm/blog.test.git
+  branch: master

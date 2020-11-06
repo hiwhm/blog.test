@@ -1,0 +1,57 @@
+name: Hexo CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Build on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node_version: [12.x]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+        with:
+          submodules: true
+          
+      - name: Installation Environment
+        uses: actions/setup-node@master
+        with:
+          node-version: 12.x  
+
+      - name: replace cdn url
+        id: replace
+        run: |
+          tagname=$(openssl rand -hex 4)
+          echo "::set-output name=tagname::$tagname"
+      - name: Installation
+        run: |
+          npm install
+          npm install -g hexo-cli
+          
+      - name: Generate
+        run: hexo clean && hexo g
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.replace.outputs.tagname }}
+          release_name: ${{ steps.replace.outputs.tagname }}
+          commitish: gh-pages
+          body: Automatic generated
+          draft: false
+          prerelease: true
